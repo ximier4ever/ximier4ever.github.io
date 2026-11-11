@@ -1,0 +1,1051 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#050510">
+  <meta name="description" content="la galaxia de ximena y jeanpiere">
+  <title>Te amo, Ximena — NUESTRO UNIVERSO MUMUMU</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #050510;
+      --pink: #ff3d8d;
+      --pink-soft: #ff8fc7;
+      --fuchsia: #ff1493;
+      --violet: #a855f7;
+      --white: #fff7fc;
+      --muted: rgba(255, 220, 239, .57);
+      --glass: rgba(18, 10, 28, .52);
+      --line: rgba(255, 143, 199, .18);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { width: 100%; min-height: 100%; margin: 0; }
+    body {
+      min-height: 100svh;
+      overflow: hidden;
+      background: var(--bg);
+      color: var(--white);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    button, input { font: inherit; }
+    button { color: inherit; }
+    [hidden] { display: none !important; }
+
+    #universe {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
+      display: block;
+      touch-action: manipulation;
+    }
+    .vignette, .ambient-glow {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+    }
+    .vignette {
+      background: radial-gradient(ellipse at 50% 46%, transparent 25%, rgba(2, 2, 12, .22) 72%, rgba(1, 1, 8, .72) 120%);
+    }
+    .ambient-glow {
+      background: radial-gradient(ellipse at 50% 48%, rgba(88, 13, 68, .10), transparent 48%);
+      mix-blend-mode: screen;
+    }
+
+    .ui {
+      position: relative;
+      z-index: 2;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: max(22px, env(safe-area-inset-top)) clamp(18px, 4vw, 58px) max(18px, env(safe-area-inset-bottom));
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1.6s ease, transform 1.6s ease;
+      pointer-events: none;
+    }
+    body.ready .ui { opacity: 1; transform: translateY(0); }
+    .topbar, .bottom-area, .top-meta, .audio-control, .counter { pointer-events: auto; }
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      width: min(100%, 1400px);
+      margin: 0 auto;
+    }
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: rgba(255, 224, 242, .72);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .28em;
+      text-transform: uppercase;
+    }
+    .brand-symbol {
+      color: var(--pink-soft);
+      font: 27px/1 Georgia, serif;
+      text-shadow: 0 0 18px rgba(255, 61, 141, .85);
+      letter-spacing: 0;
+    }
+    .date-chip {
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(18, 10, 28, .3);
+      color: rgba(255, 207, 231, .7);
+      font-size: 9px;
+      font-weight: 650;
+      letter-spacing: .2em;
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-copy {
+      position: absolute;
+      top: 14.5%;
+      left: 50%;
+      width: min(90vw, 680px);
+      transform: translateX(-50%);
+      text-align: center;
+      pointer-events: none;
+    }
+    .eyebrow {
+      color: rgba(255, 160, 207, .66);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .38em;
+      text-transform: uppercase;
+    }
+    .hero-title {
+      margin: 10px 0 0;
+      color: rgba(255, 239, 248, .9);
+      font: italic 500 clamp(20px, 3vw, 31px)/1.25 Georgia, "Times New Roman", serif;
+      text-shadow: 0 0 30px rgba(255, 61, 141, .24);
+    }
+    .rotating-quote {
+      min-height: 18px;
+      margin-top: 9px;
+      color: rgba(255, 202, 228, .46);
+      font: italic 12px/1.5 Georgia, serif;
+      letter-spacing: .025em;
+      transition: opacity .8s ease;
+    }
+
+    .bottom-area {
+      width: min(100%, 1040px);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      align-items: end;
+      gap: 16px 28px;
+    }
+    .counter {
+      width: min(100%, 520px);
+      padding: 15px 19px 14px;
+      border: 1px solid rgba(255, 143, 199, .17);
+      border-radius: 15px;
+      background: linear-gradient(135deg, rgba(26, 10, 31, .53), rgba(9, 10, 27, .48));
+      box-shadow: 0 12px 50px rgba(0, 0, 0, .18), inset 0 1px rgba(255,255,255,.035);
+      backdrop-filter: blur(15px);
+    }
+    .counter-label {
+      color: rgba(255, 174, 211, .62);
+      font-size: 8px;
+      font-weight: 750;
+      letter-spacing: .25em;
+      text-transform: uppercase;
+    }
+    .counter-number-line {
+      display: flex;
+      align-items: baseline;
+      gap: 8px;
+      margin-top: 5px;
+    }
+    #daysTogether {
+      color: #fff0f8;
+      font: 500 clamp(27px, 4vw, 36px)/1 Georgia, serif;
+      letter-spacing: -.035em;
+      text-shadow: 0 0 22px rgba(255, 61, 141, .25);
+      font-variant-numeric: tabular-nums;
+    }
+    .days-caption {
+      color: rgba(255, 220, 239, .68);
+      font: italic 14px Georgia, serif;
+    }
+    .time-units {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 7px;
+      margin-top: 9px;
+      color: rgba(255, 225, 241, .82);
+      font-size: 10px;
+      font-variant-numeric: tabular-nums;
+    }
+    .time-unit { white-space: nowrap; }
+    .time-unit strong { color: var(--pink-soft); font-weight: 700; }
+    .counter-foot {
+      margin-top: 9px;
+      color: rgba(255, 174, 211, .5);
+      font: italic 10px Georgia, serif;
+      letter-spacing: .08em;
+    }
+
+    .controls {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 10px;
+      padding-bottom: 2px;
+    }
+    .surprise-button, .music-button {
+      border: 1px solid rgba(255, 143, 199, .3);
+      border-radius: 999px;
+      background: rgba(23, 10, 31, .45);
+      color: rgba(255, 225, 241, .9);
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+      transition: border-color .25s ease, background .25s ease, transform .25s ease, box-shadow .25s ease;
+    }
+    .surprise-button {
+      padding: 12px 17px;
+      font-size: 9px;
+      font-weight: 750;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      box-shadow: 0 0 22px rgba(255, 20, 147, .08);
+    }
+    .music-button {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      min-width: 162px;
+      justify-content: center;
+      padding: 9px 13px;
+      font-size: 9px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+    }
+    .surprise-button:hover, .music-button:hover {
+      border-color: rgba(255, 143, 199, .7);
+      background: rgba(63, 13, 52, .58);
+      box-shadow: 0 0 25px rgba(255, 20, 147, .15);
+      transform: translateY(-2px);
+    }
+    button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--pink-soft);
+      outline-offset: 4px;
+    }
+    .equalizer { display: inline-flex; align-items: center; gap: 2px; height: 12px; }
+    .equalizer i { display: block; width: 2px; height: 4px; border-radius: 2px; background: var(--pink-soft); }
+    .music-active .equalizer i { animation: equalize .65s ease-in-out infinite alternate; }
+    .music-active .equalizer i:nth-child(2) { animation-delay: .18s; }
+    .music-active .equalizer i:nth-child(3) { animation-delay: .34s; }
+    @keyframes equalize { to { height: 12px; } }
+    .volume-row { display: flex; align-items: center; gap: 8px; color: rgba(255, 195, 224, .55); font-size: 9px; }
+    .volume-row input { width: 83px; accent-color: var(--pink); cursor: pointer; }
+    .tiny-note { color: rgba(255, 200, 226, .35); font-size: 8px; letter-spacing: .06em; text-align: right; }
+
+    .floating-layer { position: fixed; inset: 0; z-index: 2; overflow: hidden; pointer-events: none; }
+    .float-message {
+      position: absolute;
+      max-width: 190px;
+      color: rgba(255, 159, 207, .55);
+      font: italic 12px/1.35 Georgia, serif;
+      letter-spacing: .04em;
+      text-shadow: 0 0 12px rgba(255, 20, 147, .55);
+      white-space: nowrap;
+      animation: drift-message 8s ease-in-out both;
+    }
+    .float-message::before { content: "♥"; margin-right: 7px; color: rgba(255, 61, 141, .62); font-style: normal; }
+    @keyframes drift-message {
+      0% { opacity: 0; transform: translate3d(0, 18px, 0) scale(.94); }
+      17% { opacity: .72; }
+      78% { opacity: .48; }
+      100% { opacity: 0; transform: translate3d(12px, -48px, 0) scale(1.04); }
+    }
+
+    .intro {
+      position: fixed;
+      inset: 0;
+      z-index: 5;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: #050510;
+      text-align: center;
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 1.7s ease;
+    }
+    .intro.fade-out { opacity: 0; }
+    .intro-inner { transform: translateY(8px); animation: intro-in 2.6s ease forwards; }
+    .intro-kicker {
+      color: rgba(255, 157, 205, .58);
+      font-size: 9px;
+      font-weight: 700;
+      letter-spacing: .48em;
+      text-transform: uppercase;
+    }
+    .intro-title {
+      margin-top: 15px;
+      color: #fff0f8;
+      font: italic 500 clamp(27px, 6vw, 54px)/1.1 Georgia, serif;
+      text-shadow: 0 0 34px rgba(255, 20, 147, .38);
+    }
+    .intro-message {
+      margin-top: 18px;
+      color: rgba(255, 180, 216, .78);
+      font-size: 9px;
+      font-weight: 650;
+      letter-spacing: .24em;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 1.2s ease, transform 1.2s ease;
+    }
+    .intro-message.reveal { opacity: 1; transform: translateY(0); }
+    @keyframes intro-in { to { transform: translateY(0); } }
+
+    .modal {
+      position: fixed;
+      inset: 0;
+      z-index: 7;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(2, 2, 12, .72);
+      backdrop-filter: blur(12px);
+      opacity: 0;
+      transition: opacity .45s ease;
+    }
+    .modal.active { opacity: 1; }
+    .modal-card {
+      position: relative;
+      width: min(100%, 520px);
+      padding: clamp(28px, 6vw, 48px) clamp(24px, 6vw, 48px) 34px;
+      border: 1px solid rgba(255, 143, 199, .31);
+      border-radius: 22px;
+      background: radial-gradient(ellipse at 50% 0%, rgba(116, 22, 83, .26), transparent 65%), linear-gradient(145deg, rgba(25, 12, 35, .97), rgba(7, 8, 23, .98));
+      text-align: center;
+      box-shadow: 0 25px 100px rgba(0, 0, 0, .55), 0 0 60px rgba(255, 20, 147, .1);
+      transform: translateY(16px) scale(.98);
+      transition: transform .45s cubic-bezier(.2,.8,.2,1);
+    }
+    .modal.active .modal-card { transform: translateY(0) scale(1); }
+    .modal-heart { color: var(--pink-soft); font-size: 25px; text-shadow: 0 0 25px var(--pink); }
+    .modal-kicker { margin-top: 15px; color: rgba(255, 173, 213, .63); font-size: 9px; font-weight: 750; letter-spacing: .32em; }
+    .modal-message { min-height: 90px; display: grid; place-items: center; margin: 17px 0 20px; color: #fff2f9; font: italic clamp(21px, 4vw, 29px)/1.35 Georgia, serif; text-shadow: 0 0 25px rgba(255, 61, 141, .2); }
+    .modal-close {
+      border: 1px solid rgba(255, 143, 199, .3);
+      border-radius: 999px;
+      padding: 10px 17px;
+      background: rgba(255, 61, 141, .08);
+      color: rgba(255, 226, 241, .86);
+      cursor: pointer;
+      font-size: 9px;
+      letter-spacing: .18em;
+    }
+    .toast {
+      position: fixed;
+      z-index: 8;
+      left: 50%;
+      bottom: max(22px, env(safe-area-inset-bottom));
+      transform: translate(-50%, 12px);
+      padding: 10px 14px;
+      border: 1px solid rgba(255, 143, 199, .25);
+      border-radius: 999px;
+      background: rgba(15, 8, 25, .92);
+      color: rgba(255, 225, 241, .85);
+      font-size: 10px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .3s ease, transform .3s ease;
+      white-space: nowrap;
+    }
+    .toast.show { opacity: 1; transform: translate(-50%, 0); }
+
+    @media (max-width: 650px) {
+      .ui { padding-left: 16px; padding-right: 16px; }
+      .brand { font-size: 8px; letter-spacing: .2em; gap: 7px; }
+      .brand-symbol { font-size: 23px; }
+      .date-chip { padding: 7px 9px; font-size: 8px; }
+      .hero-copy { top: 13.5%; width: 94vw; }
+      .eyebrow { font-size: 7px; letter-spacing: .28em; }
+      .hero-title { margin-top: 7px; font-size: 22px; }
+      .rotating-quote { font-size: 10px; margin-top: 6px; }
+      .bottom-area { grid-template-columns: 1fr; gap: 11px; align-items: center; }
+      .counter { width: 100%; padding: 11px 14px 10px; border-radius: 13px; }
+      .counter-label { font-size: 7px; }
+      #daysTogether { font-size: 29px; }
+      .days-caption { font-size: 12px; }
+      .time-units { gap: 6px; margin-top: 7px; font-size: 9px; }
+      .counter-foot { margin-top: 6px; font-size: 9px; }
+      .controls { flex-direction: row; justify-content: space-between; align-items: center; gap: 10px; }
+      .surprise-button { padding: 10px 13px; font-size: 8px; }
+      .music-button { min-width: 145px; padding: 8px 10px; font-size: 8px; }
+      .volume-row { display: none; }
+      .tiny-note { display: none; }
+      .float-message { font-size: 10px; }
+    }
+    @media (max-height: 690px) and (min-width: 651px) {
+      .hero-copy { top: 11%; }
+      .bottom-area { transform: scale(.92); transform-origin: bottom center; }
+      .ui { padding-top: 15px; padding-bottom: 14px; }
+    }
+    @media (max-width: 380px) {
+      .hero-title { font-size: 19px; }
+      .surprise-button { letter-spacing: .1em; }
+      .music-button { min-width: 132px; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <canvas id="universe" aria-label="Un corazón rosa formado por partículas, palabras y código binario"></canvas>
+  <div class="ambient-glow" aria-hidden="true"></div>
+  <div class="vignette" aria-hidden="true"></div>
+  <div class="floating-layer" id="floatingLayer" aria-hidden="true"></div>
+
+  <div class="ui" id="mainUI">
+    <header class="topbar">
+      <div class="brand"><span class="brand-symbol">∞</span><span>NUESTRO UNIVERSO MUMUMU</span></div>
+      <div class="date-chip">11 / 08 / 2026</div>
+    </header>
+
+    <section class="hero-copy" aria-label="Dedicatoria">
+      <div class="eyebrow">UNA GALAXIA - DOS CORAZONES</div>
+      <h1 class="hero-title">Tú y yo, en el mismo universo.</h1>
+      <div class="rotating-quote" id="rotatingQuote">Mi lugar favorito sigue siendo contigo.</div>
+    </section>
+
+    <footer class="bottom-area">
+      <section class="counter" aria-label="Tiempo juntos">
+        <div class="counter-label">Desde el 11 de agosto de 2026</div>
+        <div class="counter-number-line"><span id="daysTogether">0</span><span class="days-caption">días juntos</span></div>
+        <div class="time-units" aria-live="off">
+          <span class="time-unit"><strong id="hoursTogether">00</strong> horas</span>
+          <span class="time-unit"><strong id="minutesTogether">00</strong> minutos</span>
+          <span class="time-unit"><strong id="secondsTogether">00</strong> segundos</span>
+        </div>
+        <div class="counter-foot">Y cada segundo contigo cuenta...</div>
+      </section>
+
+      <div class="controls">
+        <button class="surprise-button" id="surpriseButton" type="button">Descubre un mensajito UwU</button>
+        <div class="audio-control">
+          <button class="music-button" id="musicButton" type="button" aria-pressed="false">
+            <span class="equalizer" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span id="musicLabel">Activar música :3</span>
+          </button>
+          <label class="volume-row" for="volumeControl"><span>VOL.</span><input id="volumeControl" type="range" min="0" max="1" step="0.01" value="0.35" aria-label="Volumen de música"></label>
+          <div class="tiny-note" id="musicNote">Añade tu canción en formato MP3</div>
+        </div>
+      </div>
+    </footer>
+  </div>
+
+  <div class="intro" id="intro" aria-hidden="true">
+    <div class="intro-inner">
+      <div class="intro-kicker">NUESTRO GRAN UNIVERSO :3</div>
+      <div class="intro-title">Esta es nuestra galaxia<br>juntos por siemprebb </div>
+      <div class="intro-message" id="introMessage">ALGO BONITO COMENZÓ EL 11/08/2026</div>
+    </div>
+  </div>
+
+  <div class="modal" id="surpriseModal" role="dialog" aria-modal="true" aria-labelledby="modalKicker" hidden>
+    <div class="modal-card">
+      <div class="modal-heart" aria-hidden="true">♥</div>
+      <div class="modal-kicker" id="modalKicker">UN PENSAMIENTO PARA TI</div>
+      <div class="modal-message" id="surpriseMessage">Eres mi pensamiento favorito.</div>
+      <button class="modal-close" id="closeModal" type="button">GUARDAR EN EL CORAZÓN UWU</button>
+    </div>
+  </div>
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <audio id="ambientAudio" loop preload="none"></audio>
+
+  <script>
+    (() => {
+      'use strict';
+
+      //CONECTOR DE MUSICA, CONECTAMOS EL ARCHIVO DESDE EL PUNTO.
+      const MUSIC_FILE = './MielLosAptosxCuco.mp3';
+      const LIMA_TIME_ZONE = 'America/Lima';
+      const RELATIONSHIP_START = zonedDateTimeToTimestamp(2026, 8, 11, 0, 0, 0, LIMA_TIME_ZONE);
+      const INTRO_DURATION = 6500;
+      const PHRASE_DELAY = 2800;
+      const PHRASE_CYCLE = 16000;
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const canvas = document.getElementById('universe');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const intro = document.getElementById('intro');
+      const introMessage = document.getElementById('introMessage');
+      const floatingLayer = document.getElementById('floatingLayer');
+      const rotatingQuote = document.getElementById('rotatingQuote');
+      const modal = document.getElementById('surpriseModal');
+      const surpriseMessage = document.getElementById('surpriseMessage');
+      const toast = document.getElementById('toast');
+      const audio = document.getElementById('ambientAudio');
+      const musicButton = document.getElementById('musicButton');
+      const musicLabel = document.getElementById('musicLabel');
+      const volumeControl = document.getElementById('volumeControl');
+      const musicNote = document.getElementById('musicNote');
+
+      const romanticWords = ['LOVE', 'TE AMO', 'MUUUAAK', 'FOREVER', '01', '10', '0101', '1010', '010010', '101101', '♥', 'X + J', 'BESOS', '∞'];
+      const floatingMessages = [
+        'MUMUMU', 'MUUUUAAK!!', 'TE AMO XIMENA', 'JUNTOS 4EVER', '11 / 08 / 2026',
+        'SOMOS UNO, NO LO OLVIDESBB', 'TE AMO TANTO TANTO', 'PARA SIEMPRE', 'TU Y YO',
+        'AMO TODO DE TI, ERES PERFECTABB', 'INFINITO CONTIGOBB', 'BESITOS PARA TI MI REINA'
+      ];
+      const quotes = [
+        'Mi lugar favorito siempre será contigobb.',
+        'Doy gracias a Dios por tenertebb.',
+        'Contigo todo es mucho mucho mejor.',
+        'Amo tus ojos hermosos, tu mirada, tu cabello, uff todooo.',
+        'Estoy tan loco por ti que ya no paro de pensarte.',
+        'Me arrodillaria por tu amor, por tu cariño, por tí hago todobb.',
+        'Somo uno, somos equipo, aquí y ahora, a donde fuera y cuando sea, siempre juntos.'
+      ];
+      const surpriseMessages = [
+        'Si pudiera elegir nuevamente, volvería a elegirte una y otra vesbb.',
+        'No quiero verte feliz sino es a mi lado..',
+        'Cuando te enojas es como una tormenta, tu silencio me duele mucho, te amo tantooo',
+        'Eres mi pensamiento favorito antes y después de todo.',
+        'Seguiré siempre aquí sibb, pase lo que pase yo te voy a seguir amando.',
+        'Te elegiría en esta vida y en todas las que existan.',
+        'Mi amor mi vida mi todo está bajo tu poder, me tienes en tus manosbb.'
+      ];
+
+      let width = 0;
+      let height = 0;
+      let dpr = 1;
+      let heart = { x: 0, y: 0, w: 0, h: 0 };
+      let particles = [];
+      let stars = [];
+      let rainColumns = [];
+      let bursts = [];
+      let floatingTimer = 0;
+      let quoteTimer = 0;
+      let toastTimer = 0;
+      let lastSurprise = -1;
+      let pulseBoost = 0;
+      let pointer = { x: -1000, y: -1000, active: false };
+      let animationStart = performance.now();
+      let lastFrame = 0;
+
+      function zonedDateTimeToTimestamp(year, month, day, hour, minute, second, timeZone) {
+        //hora de pared de la zona indicada a un instante UTC real.
+        const utcGuess = Date.UTC(year, month - 1, day, hour, minute, second);
+        const formatter = new Intl.DateTimeFormat('en-CA', {
+          timeZone, year: 'numeric', month: '2-digit', day: '2-digit',
+          hour: '2-digit', minute: '2-digit', second: '2-digit', hourCycle: 'h23'
+        });
+        const parts = Object.fromEntries(formatter.formatToParts(new Date(utcGuess)).map(part => [part.type, part.value]));
+        const representedAsUtc = Date.UTC(
+          Number(parts.year), Number(parts.month) - 1, Number(parts.day),
+          Number(parts.hour), Number(parts.minute), Number(parts.second)
+        );
+        const zoneOffset = representedAsUtc - utcGuess;
+        return utcGuess - zoneOffset;
+      }
+
+      const rand = (min, max) => min + Math.random() * (max - min);
+      const clamp = (value, min, max) => Math.max(min, Math.min(max, value));
+      const ease = (t) => t * t * (3 - 2 * t);
+      const pad = (n) => String(n).padStart(2, '0');
+
+      const heartPolygon = Array.from({ length: 240 }, (_, i) => {
+        const t = i / 240 * Math.PI * 2;
+        return {
+          x: 16 * Math.pow(Math.sin(t), 3) / 17,
+          y: (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 17
+        };
+      });
+
+      function isInsideHeart(x, y) {
+        let inside = false;
+        for (let i = 0, j = heartPolygon.length - 1; i < heartPolygon.length; j = i++) {
+          const a = heartPolygon[i];
+          const b = heartPolygon[j];
+          const crosses = ((a.y > y) !== (b.y > y)) &&
+            (x < (b.x - a.x) * (y - a.y) / ((b.y - a.y) || 0.000001) + a.x);
+          if (crosses) inside = !inside;
+        }
+        return inside;
+      }
+
+      function getHeartMetrics() {
+        const mobile = width <= 650;
+        const size = mobile
+          ? Math.min(width * 0.9, height * 0.49, 440)
+          : Math.min(width * 0.62, height * 0.55, 680);
+        return {
+          x: width / 2 + (pointer.active ? (pointer.x - width / 2) * 0.012 : 0),
+          y: height * (height < 620 ? 0.455 : 0.47) + (pointer.active ? (pointer.y - height / 2) * 0.009 : 0),
+          w: size,
+          h: size * 1.0
+        };
+      }
+
+      function buildTextTargets(count) {
+        const sampleCanvas = document.createElement('canvas');
+        const sampleCtx = sampleCanvas.getContext('2d', { willReadFrequently: true });
+        const maxTextWidth = heart.w * 0.82;
+        let fontSize = clamp(heart.w * 0.145, 25, 78);
+        const fontFamily = 'Georgia, "Times New Roman", serif';
+        sampleCtx.font = `italic 700 ${fontSize}px ${fontFamily}`;
+        while (sampleCtx.measureText('TE AMO XIMENA').width > maxTextWidth && fontSize > 18) {
+          fontSize -= 1;
+          sampleCtx.font = `italic 700 ${fontSize}px ${fontFamily}`;
+        }
+        const textWidth = Math.ceil(Math.min(maxTextWidth, sampleCtx.measureText('TE AMO XIMENA').width + 18));
+        const textHeight = Math.ceil(fontSize * 1.65);
+        sampleCanvas.width = Math.max(1, textWidth);
+        sampleCanvas.height = Math.max(1, textHeight);
+        sampleCtx.clearRect(0, 0, sampleCanvas.width, sampleCanvas.height);
+        sampleCtx.font = `italic 700 ${fontSize}px ${fontFamily}`;
+        sampleCtx.textAlign = 'center';
+        sampleCtx.textBaseline = 'middle';
+        sampleCtx.fillStyle = '#ffffff';
+        sampleCtx.fillText('TE AMO XIMENA', sampleCanvas.width / 2, sampleCanvas.height / 2, maxTextWidth);
+
+        const pixels = sampleCtx.getImageData(0, 0, sampleCanvas.width, sampleCanvas.height).data;
+        let points = [];
+        const step = width <= 650 ? 1.65 : 2.15;
+        for (let y = 0; y < sampleCanvas.height; y += step) {
+          for (let x = 0; x < sampleCanvas.width; x += step) {
+            const alpha = pixels[(Math.floor(y) * sampleCanvas.width + Math.floor(x)) * 4 + 3];
+            if (alpha > 105) {
+              points.push({
+                x: heart.x + x - sampleCanvas.width / 2,
+                y: heart.y + y - sampleCanvas.height / 2
+              });
+            }
+          }
+        }
+        if (points.length === 0) points = [{ x: heart.x, y: heart.y }];
+        // Escoge puntos a lo largo de todo el trazado para que la frase no quede incompleta.
+        if (points.length > count) {
+          const reduced = [];
+          for (let i = 0; i < count; i++) reduced.push(points[Math.floor(i * points.length / count)]);
+          points = reduced;
+        } else if (points.length < count) {
+          const original = points.slice();
+          while (points.length < count) {
+            const p = original[points.length % original.length];
+            points.push({ x: p.x + rand(-0.65, 0.65), y: p.y + rand(-0.65, 0.65) });
+          }
+        }
+        return points;
+      }
+
+      function createHeartParticle(originIndex, count) {
+        let nx = 0;
+        let ny = 0;
+        let found = false;
+        // La mayoría llena el corazón; una parte dibuja su contorno luminoso.
+        if (originIndex < count * 0.28) {
+          const t = rand(0, Math.PI * 2);
+          const sx = 16 * Math.pow(Math.sin(t), 3) / 17;
+          const sy = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 17;
+          nx = sx + rand(-0.025, 0.025);
+          ny = sy + rand(-0.025, 0.025);
+          found = true;
+        }
+        for (let attempts = 0; !found && attempts < 180; attempts++) {
+          nx = rand(-1.18, 1.18);
+          ny = rand(-1.12, 1.12);
+          if (isInsideHeart(nx, ny)) found = true;
+        }
+        const baseX = heart.x + nx * (heart.w / 2);
+        const baseY = heart.y - ny * (heart.h / 2);
+        const colors = ['#ff3d8d', '#ff69ad', '#ff8fc7', '#fbb6dc', '#e879f9', '#ffffff'];
+        return {
+          x: baseX, y: baseY, originX: baseX, originY: baseY,
+          targetX: heart.x, targetY: heart.y,
+          glyph: romanticWords[Math.floor(Math.random() * romanticWords.length)],
+          color: colors[Math.floor(Math.random() * colors.length)],
+          size: rand(4.2, 7.4),
+          seed: rand(0, Math.PI * 2),
+          speed: rand(0.55, 1.25)
+        };
+      }
+
+      function rebuildScene() {
+        const rect = canvas.getBoundingClientRect();
+        width = Math.max(1, rect.width);
+        height = Math.max(1, rect.height);
+        dpr = Math.min(window.devicePixelRatio || 1, 1.6);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        heart = getHeartMetrics();
+
+        const count = width <= 650 ? 640 : 1380;
+        const targets = buildTextTargets(count);
+        particles = Array.from({ length: count }, (_, i) => {
+          const p = createHeartParticle(i, count);
+          const target = targets[i];
+          p.targetX = target.x;
+          p.targetY = target.y;
+          return p;
+        });
+        stars = Array.from({ length: Math.floor(width * height / 7500) + 55 }, () => ({
+          x: rand(0, width), y: rand(0, height), r: rand(0.35, 1.25),
+          alpha: rand(0.12, 0.58), twinkle: rand(0.7, 2.2), phase: rand(0, 7)
+        }));
+        const columns = Math.max(8, Math.floor(width / 65));
+        rainColumns = Array.from({ length: columns }, (_, i) => ({
+          x: (i + rand(0.1, 0.9)) * width / columns,
+          y: rand(-height, 0), speed: rand(12, 34), length: Math.floor(rand(3, 8)),
+          size: rand(8, 10), alpha: rand(0.08, 0.21)
+        }));
+      }
+
+      function drawHeartOutline(time, alpha) {
+        const scale = 1 + 0.012 * Math.sin(time * 0.0019) + pulseBoost * 0.035;
+        ctx.save();
+        ctx.translate(heart.x, heart.y);
+        ctx.scale(scale * heart.w / 2, scale * heart.h / 2);
+        ctx.beginPath();
+        for (let i = 0; i <= 220; i++) {
+          const t = i / 220 * Math.PI * 2;
+          const x = 16 * Math.pow(Math.sin(t), 3) / 17;
+          const y = (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)) / 17;
+          if (i === 0) ctx.moveTo(x, -y);
+          else ctx.lineTo(x, -y);
+        }
+        ctx.closePath();
+        ctx.lineWidth = 1.35 / (heart.w / 2);
+        ctx.strokeStyle = `rgba(255, 92, 171, ${0.28 * alpha})`;
+        ctx.shadowColor = 'rgba(255, 20, 147, .8)';
+        ctx.shadowBlur = 17;
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      function drawBackground(time, introProgress) {
+        ctx.fillStyle = 'rgba(5, 5, 16, 0.24)';
+        ctx.fillRect(0, 0, width, height);
+
+        const glow = ctx.createRadialGradient(width / 2, height * .47, 5, width / 2, height * .47, Math.max(width, height) * .58);
+        glow.addColorStop(0, `rgba(80, 10, 60, ${0.075 * introProgress})`);
+        glow.addColorStop(0.55, 'rgba(15, 8, 35, 0.025)');
+        glow.addColorStop(1, 'rgba(5, 5, 16, 0)');
+        ctx.fillStyle = glow;
+        ctx.fillRect(0, 0, width, height);
+
+        for (const star of stars) {
+          const twinkle = .55 + .45 * Math.sin(time * .001 * star.twinkle + star.phase);
+          ctx.globalAlpha = star.alpha * twinkle * introProgress;
+          ctx.fillStyle = '#ffd9ed';
+          ctx.beginPath();
+          ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
+          ctx.fill();
+        }
+        ctx.globalAlpha = 1;
+
+        for (const column of rainColumns) {
+          column.y += column.speed * (reduceMotion ? 0 : 0.016);
+          if (column.y - column.length * 12 > height) column.y = rand(-height * .45, -20);
+          for (let i = 0; i < column.length; i++) {
+            const charY = column.y - i * 12;
+            if (charY < -15 || charY > height + 15) continue;
+            ctx.globalAlpha = column.alpha * (1 - i / column.length) * introProgress;
+            ctx.fillStyle = i === 0 ? '#ffc0e0' : '#ff4b9e';
+            ctx.font = `${column.size}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+            ctx.fillText(Math.random() > .5 ? '1' : '0', column.x, charY);
+          }
+        }
+        ctx.globalAlpha = 1;
+
+        if (pointer.active && !reduceMotion) {
+          const trail = ctx.createRadialGradient(pointer.x, pointer.y, 0, pointer.x, pointer.y, 115);
+          trail.addColorStop(0, 'rgba(255, 92, 171, .10)');
+          trail.addColorStop(1, 'rgba(255, 92, 171, 0)');
+          ctx.fillStyle = trail;
+          ctx.fillRect(pointer.x - 115, pointer.y - 115, 230, 230);
+        }
+      }
+
+      function getPhraseProgress(elapsed) {
+        const cycleTime = elapsed - INTRO_DURATION - PHRASE_DELAY;
+        if (cycleTime < 0) return 0;
+        const t = cycleTime % PHRASE_CYCLE;
+        if (t < 2800) return ease(t / 2800);
+        if (t < 6200) return 1;
+        if (t < 9000) return 1 - ease((t - 6200) / 2800);
+        return 0;
+      }
+
+      function drawHeartParticles(time, introProgress, converge) {
+        const pulse = 1 + 0.012 * Math.sin(time * .0019) + pulseBoost * .035;
+        const phaseGlow = ctx.createRadialGradient(heart.x, heart.y, 8, heart.x, heart.y, heart.w * .53);
+        phaseGlow.addColorStop(0, `rgba(255, 55, 151, ${0.055 + converge * .11})`);
+        phaseGlow.addColorStop(.55, `rgba(160, 28, 139, ${0.035 + converge * .04})`);
+        phaseGlow.addColorStop(1, 'rgba(255, 20, 147, 0)');
+        ctx.fillStyle = phaseGlow;
+        ctx.fillRect(heart.x - heart.w * .58, heart.y - heart.h * .65, heart.w * 1.16, heart.h * 1.3);
+
+        const movement = reduceMotion ? 0 : 1;
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          const driftX = Math.sin(time * .00065 * p.speed + p.seed) * 1.55 * movement;
+          const driftY = Math.cos(time * .00078 * p.speed + p.seed) * 1.55 * movement;
+          const homeX = heart.x + (p.originX - heart.x) * pulse + driftX;
+          const homeY = heart.y + (p.originY - heart.y) * pulse + driftY;
+          let x = homeX + (p.targetX - homeX) * converge;
+          let y = homeY + (p.targetY - homeY) * converge;
+
+          // Una pequeña atracción al cursor, aplicada solo a una fracción de las partículas.
+          if (pointer.active && i % 5 === 0 && !reduceMotion) {
+            const dx = pointer.x - x;
+            const dy = pointer.y - y;
+            const distance = Math.hypot(dx, dy);
+            if (distance < 105 && distance > 0) {
+              const pull = (1 - distance / 105) * 5.5 * (1 - converge * .65);
+              x += dx / distance * pull;
+              y += dy / distance * pull;
+            }
+          }
+
+          const flicker = .72 + .28 * Math.sin(time * .002 + p.seed);
+          ctx.globalAlpha = introProgress * flicker * (converge > .05 ? 1 : .84);
+          if (converge > .43) {
+            ctx.fillStyle = i % 9 === 0 ? '#fff4fa' : p.color;
+            const radius = 1.05 + converge * 1.1 + (i % 7 === 0 ? .42 : 0);
+            ctx.beginPath();
+            ctx.arc(x, y, radius, 0, Math.PI * 2);
+            ctx.fill();
+          } else {
+            ctx.fillStyle = p.color;
+            ctx.font = `${p.size * (0.88 + pulseBoost * .2)}px ui-monospace, SFMono-Regular, Menlo, monospace`;
+            ctx.fillText(p.glyph, x, y);
+          }
+        }
+        ctx.globalAlpha = 1;
+        drawHeartOutline(time, introProgress);
+      }
+
+      function drawBursts(delta) {
+        for (let i = bursts.length - 1; i >= 0; i--) {
+          const b = bursts[i];
+          b.x += b.vx * delta;
+          b.y += b.vy * delta;
+          b.vx *= .986;
+          b.vy *= .986;
+          b.life -= delta;
+          if (b.life <= 0) { bursts.splice(i, 1); continue; }
+          const alpha = clamp(b.life / b.maxLife, 0, 1);
+          ctx.globalAlpha = alpha;
+          ctx.fillStyle = b.color;
+          ctx.font = `${b.size}px Georgia, serif`;
+          ctx.shadowColor = b.color;
+          ctx.shadowBlur = 12;
+          ctx.fillText(b.heart ? '♥' : '✦', b.x, b.y);
+        }
+        ctx.globalAlpha = 1;
+        ctx.shadowBlur = 0;
+      }
+
+      function render(time) {
+        if (!width || !height) return;
+        const delta = lastFrame ? Math.min(2.2, (time - lastFrame) / 16.67) : 1;
+        lastFrame = time;
+        const elapsed = time - animationStart;
+        const introProgress = reduceMotion ? 1 : clamp(elapsed / INTRO_DURATION, 0, 1);
+        const reveal = reduceMotion ? 1 : clamp((elapsed - 3200) / 1500, 0, 1);
+        const converge = reduceMotion ? 0 : getPhraseProgress(elapsed);
+        pulseBoost *= reduceMotion ? 0 : .91;
+
+        drawBackground(time, introProgress);
+        drawHeartParticles(time, introProgress, converge);
+        drawBursts(delta);
+
+        if (reveal > 0 && !reduceMotion && Math.random() < .035) {
+          const x = heart.x + rand(-heart.w * .55, heart.w * .55);
+          const y = heart.y + rand(-heart.h * .55, heart.h * .55);
+          bursts.push({ x, y, vx: rand(-.3, .3), vy: rand(-.8, -.2), life: 700, maxLife: 700, size: rand(8, 13), color: '#ff9bc9', heart: true });
+        }
+
+        if (!reduceMotion) requestAnimationFrame(render);
+      }
+
+      function burstAt(x, y, intense = false) {
+        const amount = intense ? 38 : 13;
+        for (let i = 0; i < amount; i++) {
+          const angle = Math.random() * Math.PI * 2;
+          const velocity = rand(intense ? 1.0 : .45, intense ? 4.0 : 2.0);
+          bursts.push({
+            x, y, vx: Math.cos(angle) * velocity, vy: Math.sin(angle) * velocity - (intense ? .35 : .1),
+            life: rand(650, 1450), maxLife: 1450, size: rand(intense ? 10 : 8, intense ? 19 : 13),
+            color: Math.random() > .3 ? '#ff8fc7' : '#ffffff', heart: Math.random() > .22
+          });
+        }
+        if (bursts.length > 180) bursts.splice(0, bursts.length - 180);
+      }
+
+      function showToast(message) {
+        toast.textContent = message;
+        toast.classList.add('show');
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => toast.classList.remove('show'), 3200);
+      }
+
+      function updateCounter() {
+        const elapsed = Math.max(0, Date.now() - RELATIONSHIP_START);
+        const days = Math.floor(elapsed / 86400000);
+        const hours = Math.floor((elapsed % 86400000) / 3600000);
+        const minutes = Math.floor((elapsed % 3600000) / 60000);
+        const seconds = Math.floor((elapsed % 60000) / 1000);
+        document.getElementById('daysTogether').textContent = new Intl.NumberFormat('es-PE').format(days);
+        document.getElementById('hoursTogether').textContent = pad(hours);
+        document.getElementById('minutesTogether').textContent = pad(minutes);
+        document.getElementById('secondsTogether').textContent = pad(seconds);
+      }
+
+      function addFloatingMessage() {
+        if (document.hidden) return;
+        const node = document.createElement('div');
+        node.className = 'float-message';
+        node.textContent = floatingMessages[Math.floor(Math.random() * floatingMessages.length)];
+        const left = rand(4, 88);
+        const top = rand(22, 82);
+        node.style.left = `${left}%`;
+        node.style.top = `${top}%`;
+        if (left > 64) node.style.transformOrigin = 'right center';
+        floatingLayer.appendChild(node);
+        window.setTimeout(() => node.remove(), 8200);
+      }
+
+      function rotateQuote() {
+        let next = Math.floor(Math.random() * quotes.length);
+        rotatingQuote.style.opacity = '0';
+        window.setTimeout(() => {
+          rotatingQuote.textContent = quotes[next];
+          rotatingQuote.style.opacity = '1';
+        }, 700);
+      }
+
+      function openSurprise() {
+        let next = Math.floor(Math.random() * surpriseMessages.length);
+        if (surpriseMessages.length > 1 && next === lastSurprise) next = (next + 1) % surpriseMessages.length;
+        lastSurprise = next;
+        surpriseMessage.textContent = surpriseMessages[next];
+        modal.hidden = false;
+        requestAnimationFrame(() => modal.classList.add('active'));
+        burstAt(width / 2, height / 2, true);
+        document.getElementById('closeModal').focus();
+      }
+
+      function closeSurprise() {
+        modal.classList.remove('active');
+        window.setTimeout(() => { modal.hidden = true; document.getElementById('surpriseButton').focus(); }, 450);
+      }
+
+      async function toggleMusic() {
+        if (!audio.src) {
+          audio.src = MUSIC_FILE;
+          audio.volume = Number(volumeControl.value);
+        }
+        if (audio.paused) {
+          try {
+            await audio.play();
+            musicButton.classList.add('music-active');
+            musicButton.setAttribute('aria-pressed', 'true');
+            musicLabel.textContent = 'Pausar música';
+            musicNote.textContent = 'Reproduciendo tu canción';
+          } catch (error) {
+            musicButton.classList.remove('music-active');
+            musicButton.setAttribute('aria-pressed', 'false');
+            musicLabel.textContent = 'Activar música';
+            musicNote.textContent = 'No se encontró tu MP3';
+            showToast('Coloca tu-cancion.mp3 junto a index.html para activar la música.');
+          }
+        } else {
+          audio.pause();
+          musicButton.classList.remove('music-active');
+          musicButton.setAttribute('aria-pressed', 'false');
+          musicLabel.textContent = 'Activar música';
+          musicNote.textContent = 'Música en pausa';
+        }
+      }
+
+      canvas.addEventListener('pointermove', (event) => {
+        pointer.x = event.clientX;
+        pointer.y = event.clientY;
+        pointer.active = true;
+      }, { passive: true });
+      canvas.addEventListener('pointerleave', () => { pointer.active = false; }, { passive: true });
+      canvas.addEventListener('pointerdown', (event) => {
+        const x = event.clientX;
+        const y = event.clientY;
+        const nx = (x - heart.x) / (heart.w / 2);
+        const ny = -(y - heart.y) / (heart.h / 2);
+        const onHeart = isInsideHeart(nx, ny);
+        burstAt(x, y, onHeart);
+        if (onHeart) pulseBoost = 1;
+      });
+      window.addEventListener('resize', rebuildScene, { passive: true });
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) updateCounter(); });
+
+      document.getElementById('surpriseButton').addEventListener('click', openSurprise);
+      document.getElementById('closeModal').addEventListener('click', closeSurprise);
+      modal.addEventListener('click', (event) => { if (event.target === modal) closeSurprise(); });
+      document.addEventListener('keydown', (event) => { if (event.key === 'Escape' && !modal.hidden) closeSurprise(); });
+      musicButton.addEventListener('click', toggleMusic);
+      volumeControl.addEventListener('input', () => { audio.volume = Number(volumeControl.value); });
+      audio.addEventListener('error', () => {
+        musicButton.classList.remove('music-active');
+        musicButton.setAttribute('aria-pressed', 'false');
+        musicLabel.textContent = 'Activar música';
+        musicNote.textContent = 'Añade tu archivo MP3';
+      });
+
+      rebuildScene();
+      updateCounter();
+      window.setInterval(updateCounter, 1000);
+      floatingTimer = window.setInterval(addFloatingMessage, 4300);
+      quoteTimer = window.setInterval(rotateQuote, 8200);
+      window.setTimeout(() => introMessage.classList.add('reveal'), 3600);
+      window.setTimeout(() => intro.classList.add('fade-out'), 5700);
+      window.setTimeout(() => {
+        intro.remove();
+        document.body.classList.add('ready');
+        addFloatingMessage();
+      }, 7400);
+
+      if (reduceMotion) {
+        // Una composición estática y accesible cuando el sistema solicita movimiento reducido.
+        drawBackground(performance.now(), 1);
+        drawHeartParticles(performance.now(), 1, 0);
+      } else {
+        requestAnimationFrame(render);
+      }
+
+      // Evita intervalos innecesarios cuando la pestaña está en segundo plano.
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+          window.clearInterval(floatingTimer);
+          window.clearInterval(quoteTimer);
+        } else {
+          floatingTimer = window.setInterval(addFloatingMessage, 4300);
+          quoteTimer = window.setInterval(rotateQuote, 8200);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
